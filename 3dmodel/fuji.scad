@@ -1,14 +1,28 @@
 // НАСТРОЙКИ КОРПУСА
-cell = 1;             // Размер мм
-thickness = 8;        // Толщина (высота) основания клавиатуры в мм
-roundness = 4;        // Радиус скругления углов в мм
+cell = 1;                 // Размер мм
+thickness = 8;            // Толщина (высота) основания клавиатуры в мм
+roundness = 4;            // Радиус скругления углов в мм
+cut_depth = 5;            // Глубина выреза сверху (ванночка) в мм
+wall_thickness = 2;       // Толщина стенки (отступ от края) в мм
 
 // Включаем сглаживание окружностей
 $fn = 60;
 
 // Сборка 3D модели
-linear_extrude(height = thickness) {
-    smooth_body(r = roundness);
+difference() {
+    // Внешний корпус
+    linear_extrude(height = thickness) {
+        smooth_body(r = roundness);
+    }
+    
+    // Вырез ванночки сверху (не сквозной)
+    translate([0, 0, thickness - cut_depth]) {
+        linear_extrude(height = cut_depth) {
+            offset(r = -wall_thickness) {
+                smooth_body(r = roundness);
+            }
+        }
+    }
 }
 
 // Модуль для скругления контура
